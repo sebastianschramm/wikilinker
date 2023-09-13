@@ -35,7 +35,7 @@ async def display_summaries(named_entities: List[str]):
 
 async def display_ner(entity_type: str, named_entities: List[str], parent_message_id):
     await cl.Message(
-        content=f"Recognized the following entities of type {entity_type['content']}:"
+        content=f"Recognized the following entities of type {entity_type}:"
         f"\n\t{named_entities}",
         parent_id=parent_message_id,
         author=AUTHOR_NER,
