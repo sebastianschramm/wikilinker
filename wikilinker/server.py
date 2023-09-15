@@ -2,7 +2,7 @@ from typing import List
 
 import chainlit as cl
 
-from wikilinker.ner import get_ner
+from wikilinker.ner import get_ner, prepare_model_pipeline
 from wikilinker.wiki import get_wiki_summary
 
 AUTHOR_LINKER = "WIKILINKER"
@@ -43,15 +43,16 @@ async def display_ner(entity_type: str, named_entities: List[str], parent_messag
 
 
 async def process_message(message: dict, entity_type: str):
-    named_entities = get_ner(
-        message, entity_type=entity_type, model_name=NER_MODEL_NAME
-    )
+    named_entities = get_ner(message, entity_type=entity_type, gen_ner=gen_ner)
     await display_ner(
         entity_type=entity_type,
         named_entities=named_entities,
         parent_message_id=message["id"],
     )
     await display_summaries(named_entities=named_entities)
+
+
+gen_ner = prepare_model_pipeline(NER_MODEL_NAME)
 
 
 @cl.on_chat_start

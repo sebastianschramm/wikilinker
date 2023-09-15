@@ -3,7 +3,7 @@ import json
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 
-def get_ner_generator(model_name: str) -> pipeline:
+def prepare_model_pipeline(model_name: str) -> pipeline:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
 
@@ -29,14 +29,12 @@ def get_prompt_template():
     return pt
 
 
-def get_ner(input_text: str, entity_type: str, model_name: str):
+def get_ner(input_text: str, entity_type: str, gen_ner):
     prompt = get_prompt_template().format_map(
         {"input_text": input_text, "entity_name": entity_type.lower()}
     )
     try:
-        ner_list = json.loads(
-            get_ner_generator(model_name=model_name)(prompt)[0]["generated_text"]
-        )
+        ner_list = json.loads(gen_ner(prompt)[0]["generated_text"])
     except Exception:
         ner_list = []
     return ner_list
